@@ -1,4 +1,4 @@
-package dto;
+package org.example.abysaltobackendtask.dto.dummyjson;
 import java.util.List;
 
 public record DummyJsonProduct(

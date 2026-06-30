@@ -6,7 +6,7 @@ import org.example.abysaltobackendtask.dto.ProductListItemDto;
 import org.example.abysaltobackendtask.model.Product;
 import org.example.abysaltobackendtask.source.ProductSource;
 import org.springframework.stereotype.Service;
-
+import org.example.abysaltobackendtask.dto.ProductFilter;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,11 +16,30 @@ public class ProductService {
     private static final int SHORT_DESCRIPTION_MAX_LENGTH = 100;
     private final ProductSource productSource;
 
-    public List<ProductListItemDto> getProducts(){
-        return productSource.getAllProducts().stream().map(this::toListItem).toList();
+    public List<ProductListItemDto> getProducts(ProductFilter filter){
+        return productSource.getAllProducts().stream().filter(product -> matches(product,filter)).map(this::toListItem).toList();
     }
     public Optional<ProductDetailDto> getProductById(long id){
         return productSource.getProductById(id).map(this::toDetail);
+    }
+    private boolean matches(Product p, ProductFilter f) {
+        if (f.category() != null && !f.category().isBlank()
+                && !f.category().equalsIgnoreCase(p.category())) {
+            return false;
+        }
+        if (f.minPrice() != null && (p.price() == null || p.price() < f.minPrice())) {
+            return false;
+        }
+        if (f.maxPrice() != null && (p.price() == null || p.price() > f.maxPrice())) {
+            return false;
+        }
+        if (f.search() != null && !f.search().isBlank()) {
+            String name = p.title() == null ? "" : p.title().toLowerCase();
+            if (!name.contains(f.search().toLowerCase())) {
+                return false;
+            }
+        }
+        return true;
     }
     private ProductListItemDto toListItem(Product p) {
         return new ProductListItemDto(

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.abysaltobackendtask.dto.ProductDetailDto;
 import org.example.abysaltobackendtask.dto.ProductFilter;
 import org.example.abysaltobackendtask.dto.ProductListItemDto;
+import org.example.abysaltobackendtask.exception.ProductNotFoundException;
 import org.example.abysaltobackendtask.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +28,8 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDetailDto> getProductById(@PathVariable long id) {
+    public ProductDetailDto getProductById(@PathVariable long id) {
         return productService.getProductById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(()->new ProductNotFoundException(id));
     }
 }

@@ -5,6 +5,7 @@ import org.example.abysaltobackendtask.dto.ProductDetailDto;
 import org.example.abysaltobackendtask.dto.ProductListItemDto;
 import org.example.abysaltobackendtask.model.Product;
 import org.example.abysaltobackendtask.source.ProductSource;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.example.abysaltobackendtask.dto.ProductFilter;
 import java.util.List;
@@ -15,10 +16,11 @@ import java.util.Optional;
 public class ProductService {
     private static final int SHORT_DESCRIPTION_MAX_LENGTH = 100;
     private final ProductSource productSource;
-
+    @Cacheable("products")
     public List<ProductListItemDto> getProducts(ProductFilter filter){
         return productSource.getAllProducts().stream().filter(product -> matches(product,filter)).map(this::toListItem).toList();
     }
+    @Cacheable("productDetails")
     public Optional<ProductDetailDto> getProductById(long id){
         return productSource.getProductById(id).map(this::toDetail);
     }

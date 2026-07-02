@@ -66,7 +66,49 @@ public class ProductServiceTest {
         assertThat(result).hasSize(1);
         assertThat(result.get(0).name()).isEqualTo("Mascara");
     }
+    @Test
+    void filtersByPriceRange() {
+        when(productSource.getAllProducts()).thenReturn(List.of(
+                product(1, "Jeftino", "beauty", 5.0, "opis"),
+                product(2, "Srednje", "beauty", 15.0, "opis"),
+                product(3, "Skupo", "beauty", 100.0, "opis")
+        ));
+
+        List<ProductListItemDto> result = productService.getProducts(
+                new ProductFilter(null, 10.0, 50.0, null));
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).name()).isEqualTo("Srednje");
+    }
+
+    @Test
+    void searchByNameIsCaseInsensitive() {
+        when(productSource.getAllProducts()).thenReturn(List.of(
+                product(1, "Essence Mascara", "beauty", 10.0, "opis"),
+                product(2, "Red Lipstick", "beauty", 12.0, "opis")
+        ));
+
+        List<ProductListItemDto> result = productService.getProducts(
+                new ProductFilter(null, null, null, "MASCARA"));
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).name()).isEqualTo("Essence Mascara");
+    }
+
+    @Test
+    void emptyFilterReturnsAllProducts() {
+        when(productSource.getAllProducts()).thenReturn(List.of(
+                product(1, "A", "beauty", 10.0, "opis"),
+                product(2, "B", "electronics", 20.0, "opis")
+        ));
+
+        List<ProductListItemDto> result = productService.getProducts(
+                new ProductFilter(null, null, null, null));
+
+        assertThat(result).hasSize(2);
+    }
 }
+
 
 
 

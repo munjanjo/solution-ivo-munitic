@@ -133,6 +133,15 @@ Swagger, health i login su javni, ostalo traži token.
 - Unit testovi (`ProductServiceTest`) – filtriranje, pretraga, skraćivanje opisa (izvor je mockan).
 - Integracijski testovi (`ProductControllerTest`) – HTTP sloj i sigurnost preko MockMvc-a.
 
+## Pokretanje putem Dockera
+
+```bash
+docker build -t abysalto-backend-task .
+docker run -p 8080:8080 abysalto-backend-task
+```
+
+Aplikacija je dostupna na http://localhost:8080, isto kao i lokalno.
+
 ## Napomena o korištenju AI alata
 
 Pri izradi sam koristio AI (Claude) kao pomoć pri odlukama, ne za generiranje gotovog rješenja.
